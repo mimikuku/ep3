@@ -6,6 +6,9 @@ node(){
             deleteDir()
         }
         sh "export"
+        withDockerServer([uri: 'unix:///var/run/docker.sock']) {
+            sh 'docker ps'
+        }
     }
     stage('get source') {
         dir(workdir) {
