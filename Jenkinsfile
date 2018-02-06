@@ -5,7 +5,7 @@ pipeline {
         stage('Download') {
             steps {
                  echo 'Downloading'
-                 git branch: 'origin/akuplensky', credentialsId: 'lexa500-git', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
+                 git branch: 'origin/akuplensky', credentialsId: 'test_jenkins_git', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
             }
         }       
         stage('Build') {
