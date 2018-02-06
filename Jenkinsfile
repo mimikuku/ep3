@@ -1,3 +1,5 @@
+def workdir="project"
+
 node(){
     stage('test'){
         dir(workdir) {
