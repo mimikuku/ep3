@@ -13,7 +13,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-            }
+             withMaven(maven: 'maven') {
+             sh "mvn -X clean package -Dmaven.test.skip=true"
+              }
+             }
         }
         stage('Test') {
             steps {
