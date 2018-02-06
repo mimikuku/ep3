@@ -9,11 +9,15 @@ pipeline(){
     }
     stages {
         stage('test'){
-            sh "export"
+            steps {
+                sh "export"
+            }
         }
         stage('get source') {
-            dir(workdir) {
-                git branch: 'slysikov', credentialsId: 'a4aaa3b8-a6eb-467d-9c7b-165308891f1e', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
+            steps {
+                dir(workdir) {
+                    git branch: 'slysikov', credentialsId: 'a4aaa3b8-a6eb-467d-9c7b-165308891f1e', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
+                }
             }
         }
         stage('run tests') {
