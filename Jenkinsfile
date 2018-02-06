@@ -5,7 +5,7 @@ pipeline {
         stage('test') {
             steps {
                  echo 'Test'
-               withMaven(maven: 'maven-3.5.2') {
+               withMaven(maven: 'maven') {
                 sh "mvn -X clean test"
                }
             }
