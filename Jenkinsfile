@@ -20,46 +20,5 @@ pipeline(){
                 }
             }
         }
-        stage('run tests') {
-            steps {
-            
-            }
-        }
-        stage('build package') {
-                    steps {
-            
-            }
-    
-        }
-        stage('save artifact') {
-                    steps {
-            
-            }
-    
-        }
-        stage('deploy to env') {
-                    steps {
-            
-            }
-    
-        }
-        stage('provision env') {
-                    steps {
-            
-            }
-    
-        }
-        stage('integration test') {
-                    steps {
-            
-            }
-    
-        }
-        stage('send report') {
-                    steps {
-            
-            }
-    
-        }
     }
 }
