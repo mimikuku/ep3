@@ -38,11 +38,16 @@ stage('Build images') {
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
+docker.withTool('docker'){
+                   withDockerServer([uri: 'unix:///var/run/docker.sock']) {
         docker.withRegistry('https://registry.hub.docker.com', '35ad3177-1015-478e-bad5-0370cd41e645') {
             app_processor.push("${env.BUILD_NUMBER}")
             app_processor.push("latest")
             app_gw.push("${env.BUILD_NUMBER}")
             app_gw.push("latest")
+       }
+}
+
         }
     }
 }
