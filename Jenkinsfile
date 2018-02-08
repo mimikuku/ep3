@@ -25,12 +25,13 @@ node {
     stage('Build images') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
-          docker.withServer('unix:///var/run/docker.sock'){
-           app_processor = docker.build("message-processor", "-f message-processor/Dockerfile")
-           app_gateway = docker.build("message-gateway", "-f message-gateway/Dockerfile")
+              docker.withTool('docker'){
+                   withDockerServer([uri: 'unix:///var/run/docker.sock']) {
+                    app_processor = docker.build("message-processor", "-f message-processor/Dockerfile")
+                    app_gateway = docker.build("message-gateway", "-f message-gateway/Dockerfile")
           }
          }
-
+        }
     stage('Push image') {
         /* Finally, we'll push the image with two tags:
          * First, the incremental build number from Jenkins
