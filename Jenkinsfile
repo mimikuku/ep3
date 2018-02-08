@@ -25,7 +25,8 @@ pipeline {
                 docker.withTool("docker"){
                    withDockerServer([uri: "unix:///var/run/docker.sock"]) {
                         sh "docker build -t message-processor ."
-                   } 
+                        sh "docker run -it --rm message-processor"                  
+                     } 
                 }
              }
           }
