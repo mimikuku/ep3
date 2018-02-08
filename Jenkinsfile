@@ -27,8 +27,8 @@ node {
          * docker build on the command line */
               docker.withTool('docker'){
                    withDockerServer([uri: 'unix:///var/run/docker.sock']) {
-                    app_processor = docker.build("message-processor", "-f message-processor/Dockerfile")
-                    app_gateway = docker.build("message-gateway", "-f message-gateway/Dockerfile")
+                    sh "docker build -t message-processor message-processor/"
+                    sh "docker build -t message-gateway message-gateway/"
           }
          }
         }
