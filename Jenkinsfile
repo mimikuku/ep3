@@ -21,9 +21,9 @@ pipeline {
         stage('dokerize') {
             steps {
                 echo 'docker-shmoker...'
-                docker.withTool('docker'){
-                   withDockerServer([uri: 'unix:///var/run/docker.sock']) {
-                        sh 'docker ps -a'
+                docker.withTool("docker"){
+                   withDockerServer([uri: "unix:///var/run/docker.sock"]) {
+                        sh "docker ps -a"
                    } 
                 }
              }
