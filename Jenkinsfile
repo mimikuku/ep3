@@ -1,6 +1,6 @@
 #!groovy
 
-def workdir = "dir1"
+def workdir = "build"
 
 node(){
     stage('test'){
