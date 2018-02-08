@@ -26,7 +26,6 @@ pipeline {
                    withDockerServer([uri: "unix:///var/run/docker.sock"]) {
                         sh "docker build -t message-processor ."
                         sh "docker run -d message-processor"
-                        sh "docker stop message-processor"                 
                      } 
                 }
              }
