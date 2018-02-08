@@ -26,8 +26,8 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app_processor = docker.build("message-processor", "-f message-processor/Dockerfile .")
-        app_gateway = docker.build("message-gateway", "-f message-gateway/Dockerfile .")
+        app_processor = docker.build("message-processor", "-f message-processor/Dockerfile")
+        app_gateway = docker.build("message-gateway", "-f message-gateway/Dockerfile")
         }
 
     stage('Push image') {
