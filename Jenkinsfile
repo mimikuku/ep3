@@ -6,7 +6,7 @@ node(){
             deleteDir()
         }
         sh "export"
-        withDocker(docker: 'docker') {
+        docker.withTool('docker') {
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
                 sh 'docker ps'
             }
