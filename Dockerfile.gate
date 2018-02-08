@@ -1,0 +1,7 @@
+FROM tomcat
+
+WORKDIR /app
+
+COPY gateway.war /app
+
+RUN ***

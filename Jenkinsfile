@@ -28,7 +28,15 @@ node(){
             withMaven(maven: 'maven') {
                 sh 'mvn package -Dmaven.test.skip=true'
             }
-
+            sh 'mkdir -f proc && cp message-processor/target/message-processor-1.0-SNAPSHOT.jar proc/'
+            sh 'cp conf art/config.properties'
+            sh 'mkdir -f gate && cp message-gateway/target/message-gateway-1.0-SNAPSHOT.war gate/'	
+        }
+        dir('sources/proc') {
+            sh 'docker build -t mess-processor .'
+        }
+        dir('sources/gate') {
+            sh 'docker build -t mess-gateway .'
         }
     }
     stage('save artifact') {
