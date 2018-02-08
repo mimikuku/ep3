@@ -10,7 +10,7 @@ node(){
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
                 sh 'docker ps'
             }
-
+        }
     }
     stage('get source') {
         dir(workdir) {
