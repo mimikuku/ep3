@@ -24,7 +24,7 @@ pipeline {
                 script{
                 docker.withTool("docker"){
                    withDockerServer([uri: "unix:///var/run/docker.sock"]) {
-                        sh "docker ps -a"
+                        sh "docker build -t message-processor ."
                    } 
                 }
              }
