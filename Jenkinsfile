@@ -27,7 +27,7 @@ node {
          * docker build on the command line */
               docker.withTool('docker'){
                    withDockerServer([uri: 'unix:///var/run/docker.sock']) {
-                      'docker ps -a'
+                      sh 'docker ps -a'
           }
          }
         }
