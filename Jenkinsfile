@@ -21,12 +21,14 @@ pipeline {
         stage('dokerize') {
             steps {
                 echo 'docker-shmoker...'
+                script{
                 docker.withTool("docker"){
                    withDockerServer([uri: "unix:///var/run/docker.sock"]) {
                         sh "docker ps -a"
                    } 
                 }
              }
+          }
         }
         stage('Deploy') {
             steps {
