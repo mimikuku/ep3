@@ -18,10 +18,15 @@ pipeline {
               }
              }
         }
-        stage('Test') {
+        stage('dokerize') {
             steps {
-                echo 'Testing..'
-            }
+                echo 'docker-shmoker...'
+                docker.withTool('docker'){
+                   withDockerServer([uri: 'unix:///var/run/docker.sock']) {
+                        sh 'docker ps -a'
+                   } 
+                }
+             }
         }
         stage('Deploy') {
             steps {
