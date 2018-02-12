@@ -50,6 +50,6 @@ node {
         }
     }
     stage('Deploy to rancher message-gateway') {
-      sh "rancher confirm: false, credentialId: 'rs1wwNa395ZS54JkroAXqKM1deZ9FHL9Cnb8DYSw', endpoint: 'http://10.101.1.79:8080/v2-beta', environmentId: '1a17', environments: '', image: 'lexa500/epam-test:message_gateway', ports: '', service: 'epam/message-gateway', timeout: 50"
+      rancher confirm: false, credentialId: 'rs1wwNa395ZS54JkroAXqKM1deZ9FHL9Cnb8DYSw', endpoint: 'http://10.101.1.79:8080/v2-beta', environmentId: '1a17', environments: '', image: 'lexa500/epam-test:message_gateway', ports: '', service: 'epam/message-gateway', timeout: 50
     }
 }
