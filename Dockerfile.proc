@@ -5,4 +5,4 @@ WORKDIR /app
 COPY processor.jar /app
 COPY config.properties /app
 
-CMD cd /app && java -jar message-processor-1.0-SNAPSHOT.jar config.properties &
+CMD java -jar processor.jar config.properties
