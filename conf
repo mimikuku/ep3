@@ -1,0 +1,4 @@
+queue.name=messageGatewayQueue
+queue.host=rabbit
+processor.type=TYPE_B
+unknown.property=abcd
