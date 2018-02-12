@@ -41,7 +41,7 @@ stage('Build images') {
 docker.withTool('docker'){
                    withDockerServer([uri: 'unix:///var/run/docker.sock']) {
 
-   withDockerRegistry([credentialsId: '35ad3177-1015-478e-bad5-0370cd41e645', url: 'lexa500/epam-test']) {
+   withDockerRegistry([credentialsId: '35ad3177-1015-478e-bad5-0370cd41e645', url: 'https://index.docker.io/v1/lexa500/epam-test']) {
             app_processor.push("${env.BUILD_NUMBER}")
             app_processor.push("latest")
             app_gw.push("${env.BUILD_NUMBER}")
