@@ -22,7 +22,7 @@ node {
          }
         }
 
-stage('Build images') {
+     stage('Build images') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
       docker.withTool('docker'){
@@ -33,25 +33,23 @@ stage('Build images') {
             }        
          }
 
-    stage('Push image') {
+     stage('Push image') {
         /* Finally, we'll push the image with two tags:
          * First, the incremental build number from Jenkins
          * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
-docker.withTool('docker'){
-                   withDockerServer([uri: 'unix:///var/run/docker.sock']) {
-
-   withDockerRegistry([credentialsId: '35ad3177-1015-478e-bad5-0370cd41e645', url: 'https://index.docker.io/v1/lexa500/epam-test']) {
-
-            def message_processor_image = docker.build("lexa500/epam-test:message_processor", "-f message-processor/Dockerfile .")
-            message_processor_image.push()
-            def message_gateway_image = docker.build("lexa500/epam-test:message_gateway", "-f message-gateway/Dockerfile .")
-            message_gateway_image.push()
-
-
-}
-                   }
-
+         docker.withTool('docker'){
+           withDockerServer([uri: 'unix:///var/run/docker.sock']) {
+             withDockerRegistry([credentialsId: '35ad3177-1015-478e-bad5-0370cd41e645', url: 'https://index.docker.io/v1/lexa500/epam-test']) {
+               def message_processor_image = docker.build("lexa500/epam-test:message_processor", "-f message-processor/Dockerfile .")
+               message_processor_image.push()
+               def message_gateway_image = docker.build("lexa500/epam-test:message_gateway", "-f message-gateway/Dockerfile .")
+               message_gateway_image.push()
+              }
+           }
         }
+    }
+    stage('Deploy to rancher') {
+      sh 'rancher confirm: false, credentialId: 'rs1wwNa395ZS54JkroAXqKM1deZ9FHL9Cnb8DYSw', endpoint: 'http://10.101.1.79:8080/v2-beta', environmentId: '', environments: '', image: 'lexa500/epam-test:message_processor', ports: '', service: 'epam/message', timeout: 50'
     }
 }
