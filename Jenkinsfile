@@ -41,7 +41,7 @@ stage('Build images') {
 docker.withTool('docker'){
                    withDockerServer([uri: 'unix:///var/run/docker.sock']) {
         docker.withRegistry('https://hub.docker.com/r/lexa500/test-jenkins/', '35ad3177-1015-478e-bad5-0370cd41e645') {
-            app_processor.push("${env.BUILD_NUMBER}")
+            app_processor.push('https://hub.docker.com/r/lexa500/test-jenkins/'"${env.BUILD_NUMBER}")
             app_processor.push("latest")
             app_gw.push("${env.BUILD_NUMBER}")
             app_gw.push("latest")
