@@ -43,9 +43,9 @@ docker.withTool('docker'){
 
    withDockerRegistry([credentialsId: '35ad3177-1015-478e-bad5-0370cd41e645', url: 'https://index.docker.io/v1/lexa500/epam-test']) {
 
-            def message_processor_image = docker.build("lexa500/epam-test:${env.BUILD_NUMBER}", "-f message-processor/Dockerfile .")
+            def message_processor_image = docker.build("lexa500/epam-test:message_processor", "-f message-processor/Dockerfile .")
             message_processor_image.push()
-            def message_gateway_image = docker.build("lexa500/epam-test:${env.BUILD_NUMBER}", "-f message-gateway/Dockerfile .")
+            def message_gateway_image = docker.build("lexa500/epam-test:message_gateway", "-f message-gateway/Dockerfile .")
             message_gateway_image.push()
 
 
