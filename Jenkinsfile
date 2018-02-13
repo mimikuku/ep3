@@ -33,10 +33,7 @@ node(){
             }
         }
         dir(gateway) {
-            environment {
-                GIT_WORKDIR = workdir
-                sh 'cp -R $WORKSPACE/$GIT_WORKDIR/message-gateway/* .'
-            }
+            sh 'cp -R $WORKSPACE/project/message-gateway/* .'
             
             writeFile file: 'Dockerfile', text: '''FROM maven
                 COPY . /opt/gateway/
@@ -91,12 +88,9 @@ node(){
                 sh 'docker network rm devops-network || true'
                 sh 'docker network create -d bridge devops-network'
                 
-                sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
+                sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
-                
-                //sleep 30
-                //sh 'docker start message-processor'
             }
         }
     }
