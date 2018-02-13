@@ -3,9 +3,6 @@ def gateway="message-gateway"
 def processor="message-processor"
 
 node(){
-    environment {
-        GIT_WORKDIR = workdir
-    }
     stage('test'){
         dir(workdir) {
             deleteDir()
@@ -36,7 +33,10 @@ node(){
             }
         }
         dir(gateway) {
-            sh 'cp -R $WORKSPACE/$GIT_WORKDIR/message-gateway/* .'
+            environment {
+                GIT_WORKDIR = workdir
+                sh 'cp -R $WORKSPACE/$GIT_WORKDIR/message-gateway/* .'
+            }
             
             writeFile file: 'Dockerfile', text: '''FROM maven
                 COPY . /opt/gateway/
