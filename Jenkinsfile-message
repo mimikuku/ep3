@@ -60,7 +60,7 @@ stage('send report') {
     def connectionResult = mWs.connectBlocking()
     mWs.close()
     return connectionResult
-}
+
 
 
         println "-----------------------"
