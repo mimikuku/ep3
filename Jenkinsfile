@@ -52,7 +52,6 @@ node(){
 	        }
         }
         dir(processor) {
-            environment {
                 sh 'cp $(find $WORKSPACE/project -name "message-processor-1.0-SNAPSHOT.jar") .'
 		        sh 'cp $(find $WORKSPACE/project -name "config.properties") .'
 		    
@@ -84,12 +83,12 @@ node(){
     stage('deploy to env') {
         docker.withTool('docker'){
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                sh 'docker rm --force message-gateway'
-                //sh 'docker rm --force message-processor'
-                sh 'docker rm --force rabbitmq'
+                sh 'docker rm --force message-gateway || true'
+                sh 'docker rm --force message-processor || true'
+                sh 'docker rm --force rabbitmq || true'
                 
                 sh 'docker network list'
-                sh 'docker network rm devops-network'
+                sh 'docker network rm devops-network || true'
                 sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
