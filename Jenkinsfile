@@ -54,8 +54,10 @@ node(){
         dir(processor) {
             environment {
                 GIT_WORKDIR = workdir
+                sh 'export'
                 sh 'cp $(find $WORKSPACE/$GIT_WORKDIR -name "message-processor-1.0-SNAPSHOT.jar") .'
 		        sh 'cp $(find $WORKSPACE/$GIT_WORKDIR -name "config.properties") .'
+		        sh 'ls'
             }
 		    
 		    writeFile file: 'Dockerfile', text: '''FROM java:8
