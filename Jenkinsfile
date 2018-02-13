@@ -86,6 +86,8 @@ node(){
     stage('deploy to env') {
         docker.withTool('docker'){
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                sh 'docker network list'
+                sh 'docker network rm devops-network'
                 sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
