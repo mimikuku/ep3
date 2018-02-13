@@ -32,10 +32,10 @@ stage('send report') {
         )
         println "-----------------------"
         println testmesg.content.toString()
-    def executeInsideContainer(String command, String message-processor){
+    def executeInsideContainer(String command, String containerNameContains){
     def defaultEnvironmentKey = getRancherDefaultEnvironmentKey()
     def containers = getFromRancherApi("/v2-beta/projects/${defaultEnvironmentKey}/containers")
-    def containerId = containers.data.find { container -> container.name.contains(message-processor) }.id
+    def containerId = containers.data.find { container -> container.name.contains(containerNameContains) }.id
 
     def executeUrl = "http://10.101.1.79:8080" + "/v2-beta/projects/${defaultEnvironmentKey}/containers/${containerId}/?action=execute"
     HttpURLConnection connection = (HttpURLConnection) executeUrl.toURL().openConnection()
