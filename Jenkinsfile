@@ -1,4 +1,6 @@
 def workdir="project"
+def gateway="message-gateway"
+def processor="message-processor"
 
 node(){
     stage('test'){
@@ -29,6 +31,29 @@ node(){
             withMaven(maven: 'mvn') {
                 sh 'mvn package -Dmaven.test.skip=true'
             }
+        }
+        dir(gateway) {
+            sh 'cp -R $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-gateway/* .'
+        }
+        dir(processor) {
+            sh 'cp $(find $JENKINS_HOME -name "message-processor-1.0-SNAPSHOT.jar") .'
+		    sh 'cp $(find $JENKINS_HOME -name "config.properties") .'
+		    
+		    writeFile file: 'Dockerfile', text: '''FROM java:8
+                COPY . /opt/processor/
+                WORKDIR /opt/processor/
+                ENTRYPOINT ["java"]
+                CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
+                
+            docker.withTool('docker'){
+			    withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
+                   	withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                        sh 'docker build -t processor:$BUILD_NUMBER .'
+					    sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
+					    sh 'docker push barloc/processor:$BUILD_NUMBER'
+	                }
+	            }
+	        }
         }
     }
     
