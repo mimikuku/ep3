@@ -52,8 +52,11 @@ node(){
 	        }
         }
         dir(processor) {
-            sh 'cp $(find $WORKSPACE -name "message-processor-1.0-SNAPSHOT.jar") .'
-		    sh 'cp $(find $WORKSPACE -name "config.properties") .'
+            environment {
+                GIT_WORKDIR = workdir
+                sh 'cp $(find $WORKSPACE/$GIT_WORKDIR -name "message-processor-1.0-SNAPSHOT.jar") .'
+		        sh 'cp $(find $WORKSPACE/$GIT_WORKDIR -name "config.properties") ."
+            }
 		    
 		    writeFile file: 'Dockerfile', text: '''FROM java:8
                 COPY . /opt/processor/
