@@ -89,8 +89,8 @@ node(){
                 sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
-                sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
-                sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
+                sh 'docker run -d --network=devops-network --name --link=rabbitmq message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
+                sh 'docker run -d --network=devops-network --name --link=rabbitmq message-processor barloc/processor:$BUILD_NUMBER'
             }
         }
     }
