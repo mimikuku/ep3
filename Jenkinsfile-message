@@ -26,7 +26,7 @@ stage('send report') {
  
         def testmesg = httpRequest( 
                httpMode: 'POST', 
-               requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":34}}', 
+               requestBody: '{"messageId":1, "timestamp":5678, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":34}}', 
                validResponseCodes: '100:299', 
                url: 'http://10.101.1.80:8080/message'
         )
