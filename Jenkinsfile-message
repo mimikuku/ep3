@@ -1,5 +1,6 @@
 #!groovy
 import groovy.json.JsonSlurper
+import org.java_websocket.drafts.Draft_6455
 node {
 
 stage('send report') {
