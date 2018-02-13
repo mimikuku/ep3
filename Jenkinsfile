@@ -81,8 +81,14 @@ stage('send report') {
                 validResponseCodes: '100:299',
                 requestBody: createBody.toString()
         )
+ 
+        def testmesg = httpRequest( 
+               httpMode: 'POST', 
+               requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":34}}', 
+               responseHandle: 'NONE', 
+               url: 'http://10.101.1.80:8080/message')
         println "-----------------------"
-        println response.content.toString()
+        println testmesg.content.toString()
 
         println "-----------------------"
         def jsonSlrpBody = new JsonSlurper().parseText(response.content)
