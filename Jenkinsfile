@@ -1,6 +1,6 @@
 def workdir="project"
-def gateway="message-gateway"
-def processor="message-processor"
+def gateway="gateway"
+def processor="processor"
 
 node(){
     stage('test'){
