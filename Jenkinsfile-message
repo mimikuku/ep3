@@ -18,7 +18,7 @@ stage('send report') {
   }
 }
         """
-        def response = httpRequest(
+        def resp = httpRequest(
                 httpMode: 'POST',
                 url: 'http://mockbin.org/bin/create',
                 validResponseCodes: '100:299',
@@ -64,11 +64,11 @@ stage('send report') {
 
 
         println "-----------------------"
-        def jsonSlrpBody = new JsonSlurper().parseText(response.content)
+        def jsonSlrpBody = new JsonSlurper().parseText(resp.content)
         println jsonSlrpBody.toString()
 
         println "-----------------------"
-        def jsonSlrpHeaders = response.headers
+        def jsonSlrpHeaders = resp.headers
         println jsonSlrpHeaders
 
     
