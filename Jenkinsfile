@@ -73,7 +73,7 @@ stage('send report') {
     "mimeType": "text/plain",
     "text": ""
   }
-
+}
         """
         def response = httpRequest(
                 httpMode: 'POST',
