@@ -8,7 +8,7 @@ import org.java_websocket.drafts.Draft;
 import org.java_websocket.handshake.ServerHandshake;
 
 node {
-
+println System.getProperty("java.ext.dirs")
 stage('send report') {
         echo 'Going to create bin'
         def createBody = """
