@@ -3,6 +3,9 @@ def gateway="message-gateway"
 def processor="message-processor"
 
 node(){
+    environment {
+        GIT_WORKDIR = workdir
+    }
     stage('test'){
         dir(workdir) {
             deleteDir()
@@ -33,11 +36,24 @@ node(){
             }
         }
         dir(gateway) {
-            sh 'cp -R $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-gateway/* .'
+            sh 'cp -R $WORKSPACE/$GIT_WORKDIR/message-gateway/* .'
+            
+            writeFile file: 'Dockerfile', text: '''FROM maven
+                COPY . /opt/gateway/
+                WORKDIR /opt/gateway/
+                ENTRYPOINT ["mvn"]
+                CMD ["tomcat7:run"]'''
+                
+            docker.withTool('docker'){
+			    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                    sh 'docker build -t gateway:$BUILD_NUMBER .'
+					sh 'docker tag gateway:$BUILD_NUMBER barloc/gateway:$BUILD_NUMBER'
+	            }
+	        }
         }
         dir(processor) {
-            sh 'cp $(find $JENKINS_HOME -name "message-processor-1.0-SNAPSHOT.jar") .'
-		    sh 'cp $(find $JENKINS_HOME -name "config.properties") .'
+            sh 'cp $(find $WORKSPACE -name "message-processor-1.0-SNAPSHOT.jar") .'
+		    sh 'cp $(find $WORKSPACE -name "config.properties") .'
 		    
 		    writeFile file: 'Dockerfile', text: '''FROM java:8
                 COPY . /opt/processor/
@@ -46,19 +62,23 @@ node(){
                 CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
                 
             docker.withTool('docker'){
-			    withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
-                   	withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                        sh 'docker build -t processor:$BUILD_NUMBER .'
-					    sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
-					    sh 'docker push barloc/processor:$BUILD_NUMBER'
-	                }
+			    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                    sh 'docker build -t processor:$BUILD_NUMBER .'
+					sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
 	            }
 	        }
         }
     }
     
     stage('save artifact') {
-
+        docker.withTool('docker'){
+            withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
+                withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                    sh 'docker push barloc/processor:$BUILD_NUMBER'
+                    sh 'docker push barloc/gateway:$BUILD_NUMBER'
+                }
+            }
+        }
     }
     stage('deploy to env') {
 
