@@ -1,4 +1,5 @@
-FROM tomcat
-RUN mkdir /usr/local/tomcat/webapps/message
-COPY message-gateway/target/message-gateway-1.0-SNAPSHOT.war /usr/local/tomcat/webapps/message/
-CMD ["catalina.sh", "run"]
+FROM maven:3.5.2-jdk-8
+EXPOSE 8080
+COPY message-gateway /opt
+WORKDIR /opt
+CMD ["mvn","tomcat7:run"]
