@@ -1,5 +1,5 @@
 import groovy.json.JsonSlurper
-import import org.java_websocket.drafts.Draft_6455
+import org.java_websocket.drafts.Draft_6455
 node {
 println System.getProperty("java.ext.dirs")
 stage('send report') {
