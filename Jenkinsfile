@@ -86,8 +86,8 @@ node(){
     stage('deploy to env') {
         docker.withTool('docker'){
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                //sh 'docker rm --force message-gateway'
-                //sh 'docker rm --force message-processor'
+                sh 'docker rm --force message-gateway'
+                sh 'docker rm --force message-processor'
                 //sh 'docker rm --force rabbitmq'
                 
                 sh 'docker network list'
@@ -98,8 +98,8 @@ node(){
                 sh 'docker run -d --rm --network=devops-network --name rabbitmq rabbitmq'
                 sh 'docker run -d --rm --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
                 
-                sleep 30
-                sh 'docker start message-processor'
+                //sleep 30
+                //sh 'docker start message-processor'
             }
         }
     }
