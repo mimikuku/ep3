@@ -86,9 +86,9 @@ node(){
     stage('deploy to env') {
         docker.withTool('docker'){
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                sh 'docker rm --force message-gateway || EXIT(0)'
-                sh 'docker rm --force message-processor'
-                sh 'docker rm --force rabbitmq'
+                //sh 'docker rm --force message-gateway'
+                //sh 'docker rm --force message-processor'
+                //sh 'docker rm --force rabbitmq'
                 
                 sh 'docker network list'
                 sh 'docker network rm devops-network'
