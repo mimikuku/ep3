@@ -90,6 +90,10 @@ node(){
                 sh 'docker network rm devops-network'
                 sh 'docker network create -d bridge devops-network'
                 
+                sh 'docker rm --force message-gateway'
+                sh 'docker rm --force message-processor'
+                sh 'docker rm --force rabbitmq'
+                
                 sh 'docker run -d --rm --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --rm --network=devops-network --name rabbitmq rabbitmq'
                 sh 'docker run -d --rm --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
