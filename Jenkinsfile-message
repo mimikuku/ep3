@@ -32,6 +32,40 @@ stage('send report') {
         )
         println "-----------------------"
         println testmesg.content.toString()
+    def executeInsideContainer(String command, String containerNameContains){
+    def defaultEnvironmentKey = getRancherDefaultEnvironmentKey()
+    def containers = getFromRancherApi("/v2-beta/projects/${defaultEnvironmentKey}/containers")
+    def containerId = containers.data.find { container -> container.name.contains(message-processor) }.id
+
+    def executeUrl = "http://10.101.1.79:8080" + "/v2-beta/projects/${defaultEnvironmentKey}/containers/${containerId}/?action=execute"
+    HttpURLConnection connection = (HttpURLConnection) executeUrl.toURL().openConnection()
+    connection.setDoOutput(true)
+    connection.setRequestMethod("POST")
+    connection.setRequestProperty("Authorization", "Basic ${authString}")
+    connection.setRequestProperty("Content-Type", "application/json")
+    connection.setRequestProperty("Accept", "application/json")
+    def data = '{"attachStdin":false, "attachStdout":false, "command":[' + command + '], "tty":false}'
+    connection.outputStream << data
+    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK ||
+        connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED ||
+        connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+    } else {
+        String response = (new InputStreamReader(connection.getErrorStream())).readLines().join(" ")
+        println "POST URL: " + executeUrl
+        throw new IOException("Error during POST request (ResponseCode ${connection.getResponseCode()}): " + response)
+    }
+    def responseBody = connection.getInputStream().readLines()
+    JsonSlurper slurper = new JsonSlurper()
+    def slurped = slurper.parseText(responseBody)
+    def token = slurped.token
+    def websocketUrl = slurped.url
+    println "Making request to websocket: " + websocketUrl
+    org.java_websocket.client.WebSocketClient mWs = new MyWebSocketClient( new URI( websocketUrl + "?token=" + token ), new Draft_6455(), null, 60)
+    def connectionResult = mWs.connectBlocking()
+    mWs.close()
+    return connectionResult
+}
+
 
         println "-----------------------"
         def jsonSlrpBody = new JsonSlurper().parseText(response.content)
