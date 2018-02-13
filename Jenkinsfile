@@ -1,7 +1,9 @@
 #!groovy
 import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
-
+def binNumber
+def binHost = 'http://requestbin.fullcontact.com'
 def workdir = "dir1"
 
 node(){
@@ -49,37 +51,44 @@ node(){
     stage('integration test') {
 
     }
-    stage('send report') {
+    stage('Create bin') {
         echo 'Going to create bin'
-        def createBody = """
-{
-  "status": 200,
-  "statusText": "OK",
-  "httpVersion": "HTTP/1.1",
-  "headers": [],
-  "cookies": [],
-  "content": {
-    "mimeType": "text/plain",
-    "text": ""
-  }
-}
-        """
-        def response = httpRequest(
+        def rbin = httpRequest(
+                consoleLogResponseBody: true,
                 httpMode: 'POST',
-                url: 'http://mockbin.org/bin/create',
-                validResponseCodes: '100:299',
-                requestBody: createBody.toString()
+                url: "${binHost}/api/v1/bins"
         )
-        println "-----------------------"
-        println response.content.toString()
 
-        println "-----------------------"
-        def jsonSlrpBody = new JsonSlurper().parseText(response.content)
-        println jsonSlrpBody.toString()
+        def json = new JsonSlurper().parseText(rbin.getContent())
 
-        println "-----------------------"
-        def jsonSlrpHeaders = response.headers
-        println jsonSlrpHeaders
+        binNumber = json.name.toString()
+        println binNumber
+    }
+    stage('Send message to bin') {
+        echo 'Print bin info'
 
+        def json200 = JsonOutput.toJson(
+                [
+                        messageId: 3,
+                        timestamp: 3234,
+                        protocolVersion: '2.0.0',
+                        payload: [
+                                mMX: 1234,
+                                mPermGen: 5678,
+                                mOldGen: 22222,
+                                mYoungGen: 333333]
+                ])
+
+        def resp = httpRequest(
+                consoleLogResponseBody: true,
+                httpMode: 'POST',
+                url: "${binHost}/${binNumber}",
+                requestBody: json200
+        )
+        println binNumber
+    }
+    stage('Send test message') {
+        echo 'Going to send test message'
+        println "${binHost}/${binNumber}?inspect"
     }
 }
