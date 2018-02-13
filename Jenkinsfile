@@ -61,8 +61,8 @@ node(){
 		    writeFile file: 'Dockerfile', text: '''FROM java:8
                 COPY . /opt/processor/
                 WORKDIR /opt/processor/
-                RUN java -jar message-processor-1.0-SNAPSHOT.jar config.properties
-                CMD ["java", "Main"]'''
+                ENTRYPOINT ["java"]
+                CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
                 
             docker.withTool('docker'){
 			    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
