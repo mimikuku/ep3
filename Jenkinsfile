@@ -1,3 +1,5 @@
+#!groovy
+import groovy.json.JsonSlurper
 node {
 
     def app_processor
@@ -55,6 +57,45 @@ node {
     }
     stage('Deploy to rancher message-processor') {
       rancher confirm: false, credentialId: 'rs1wwNa395ZS54JkroAXqKM1deZ9FHL9Cnb8DYSw', endpoint: 'http://10.101.1.79:8080/v2-beta', environmentId: '1a5', environments: '', image: 'lexa500/epam-test:message_processor', ports: '', service: 'epam/message-processor', timeout: 50
+
+
     }
+stage('send report') {
+        echo 'Going to create bin'
+        def createBody = """
+{
+  "status": 200,
+  "statusText": "OK",
+  "httpVersion": "HTTP/1.1",
+  "headers": [],
+  "cookies": [],
+  "content": {
+    "mimeType": "text/plain",
+    "text": ""
+  }
+
+        """
+        def response = httpRequest(
+                httpMode: 'POST',
+                url: 'http://mockbin.org/bin/create',
+                validResponseCodes: '100:299',
+                requestBody: createBody.toString()
+        )
+        println "-----------------------"
+        println response.content.toString()
+
+        println "-----------------------"
+        def jsonSlrpBody = new JsonSlurper().parseText(response.content)
+        println jsonSlrpBody.toString()
+
+        println "-----------------------"
+        def jsonSlrpHeaders = response.headers
+        println jsonSlrpHeaders
+
+    
+}
+
+
 
 }
+
