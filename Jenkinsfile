@@ -90,13 +90,15 @@ node(){
                 sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
-                sleep 60
+                sleep 30
                 sh 'docker run -d --network=devops-network --name message-gateway -p 8088:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
             }
         }
     }
     stage('integration test') {
+        sleep 90
+        
         def result = "apiv1="
         
         result += verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI) + "&apiv2="
