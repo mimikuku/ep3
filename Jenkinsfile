@@ -91,7 +91,7 @@ node(){
 
     }
     stage('integration test') {
-        def response = httpRequest contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://172.17.0.1:8082/message", validResponseCodes: '200'
+        def response = httpRequest authentication: 'blabla', contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://172.17.0.1:8082/message"
         println response
     }
     stage('send report') {
