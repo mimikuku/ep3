@@ -5,6 +5,8 @@ def TEST_STRING_1 = '"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0",
 def TEST_STRING_2 = '"messageId":2, "timestamp":2234, "protocolVersion":"1.0.1", "messageData":{"mMX":1234, "mPermGen":5678, "mOldGen":22222}'
 def TEST_STRING_3 = '"messageId":3, "timestamp":3234, "protocolVersion":"2.0.0", "payload":{"mMX":1234, "mPermGen":5678, "mOldGen":22222, "mYoungGen":333333}'
 
+def resultOfTests = ""
+
 def gateway="gateway"
 def processor="processor"
 
@@ -92,29 +94,50 @@ node(){
             }
         }
     }
-    stage('provision env') {
-
-    }
     stage('integration test') {
-        def result = ""
+        def result = "apiv1="
         
+        result += verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI) + "&apiv2="
+        result += verifyViaTestString(TEST_STRING_2, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI) + "&apiv3="
         result += verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI)
+        
+        resultOfTests = result
     }
     stage('send report') {
-
+        def responsebin= httpRequest(
+            httpMode: 'POST',
+            url: 'http://requestbin.fullcontact.com/api/v1/bins',
+            validResponseCodes: '200' )
+        def bucketID = new JsonSlurper().parseText(responsebin.content)
+        reportbucket = bucketID.name
+        def urls = 'http://requestbin.fullcontact.com/' + reportbucket
+        httpRequest(
+            httpMode: 'POST',
+            url: urls,
+            validResponseCodes: '200',
+            responseHandle: 'NONE',
+            contentType: 'APPLICATION_FORM',
+            requestBody: report
+        )
+        println "http://requestbin.fullcontact.com/$reportbucket?inspect"
+        println report
     }
 }
 
-String verifyViaTestString(queryString, serverURI, dockerConURI) {
-    def response = httpRequest httpMode: 'POST', requestBody: "{"+queryString+"}", responseHandle: 'NONE', url: serverURI
+def verifyViaTestString(queryString, serverURI, dockerConURI) {
+    def response = httpRequest(
+        httpMode: 'POST', 
+        requestBody: "{"+queryString+"}", 
+        responseHandle: 'NONE', 
+        url: serverURI )
     sleep 1
     withDockerServer([uri: dockerConURI]) {
         outString = sh 'docker logs --tail 1 message-processor'
         readyString = outString.trim()
         if (readyString == queryString) {
-            testResult = "Test with query {" + queryString + "} pass sucessfuly"
+            testResult = "ok"
         } else {
-            testResult = "Test with query {" + queryString + "} now works"
+            testResult = "fail"
         }
         return testResult
         }
