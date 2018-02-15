@@ -1,5 +1,5 @@
 #!groovy
-import groovy.json.JsonSlurperClassic
+import groovy.json.JsonSlurper
 
 def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
 def MESSAGE_GATEWAY_SERVER_FOR_TEST = 'http://172.17.0.1:8088/message'
@@ -113,7 +113,7 @@ node(){
             httpMode: 'POST',
             url: 'http://requestbin.fullcontact.com/api/v1/bins',
             validResponseCodes: '200' )
-        def bucketID = new JsonSlurperClassic().parseText(responsebin.content)
+        def bucketID = new JsonSlurper().parseText(responsebin.content)
         reportbucket = bucketID.name
         def urls = 'http://requestbin.fullcontact.com/' + reportbucket
         httpRequest(
