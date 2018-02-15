@@ -97,7 +97,7 @@ node(){
         }
     }
     stage('integration test') {
-        sleep 15
+        sleep 60
         
         def result = "apiv1="
         
