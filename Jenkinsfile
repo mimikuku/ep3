@@ -136,8 +136,10 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
     sleep 1
     docker.withTool('docker'){
         withDockerServer([uri: dockerConURI]) {
-            outString = sh 'docker logs --tail 1 message-processor'
-            readyString = outString.trim()
+            outString = sh (
+                script: 'docker logs --tail 1 message-processor',
+                returnStdout: true
+                ).trim()
             if (readyString == queryString) {
                 testResult = "ok"
             } else {
