@@ -98,7 +98,7 @@ node(){
     stage('integration test') {
         def result = ""
         
-        def verifyViaTestString(queryString, serverURI, dockerConURI) {
+        verifyViaTestString(queryString, serverURI, dockerConURI) {
             def response = httpRequest httpMode: 'POST', requestBody: "{"+queryString+"}", responseHandle: 'NONE', url: serverURI
             sleep 1
             withDockerServer([uri: dockerConURI]) {
