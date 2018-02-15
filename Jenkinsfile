@@ -8,8 +8,6 @@ def TEST_STRING_1 = '"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0",
 def TEST_STRING_2 = '"messageId":2, "timestamp":2234, "protocolVersion":"1.0.1", "messageData":{"mMX":1234, "mPermGen":5678, "mOldGen":22222}'
 def TEST_STRING_3 = '"messageId":3, "timestamp":3234, "protocolVersion":"2.0.0", "payload":{"mMX":1234, "mPermGen":5678, "mOldGen":22222, "mYoungGen":333333}'
 
-def resultOfTests = ""
-
 def gateway="gateway"
 def processor="processor"
 
@@ -99,6 +97,7 @@ node(){
     }
     stage('integration test') {
         sleep 45
+        def resultOfTests = ""
         
         def result = "apiv1="
         
@@ -107,8 +106,7 @@ node(){
         result += verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI)
         
         resultOfTests = result
-    }
-    stage('send report') {
+        
         print resultOfTests
 
         def responsebin= httpRequest(
@@ -128,6 +126,9 @@ node(){
         println "http://requestbin.fullcontact.com/$reportbucket?inspect"
         println report
     }
+    stage('send report') {
+        
+    }
 }
 
 def verifyViaTestString(queryString, serverURI, dockerConURI) {
@@ -143,6 +144,7 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
                 script: 'docker logs --tail 2 message-processor',
                 returnStdout: true
                 )[0].trim()
+            print "Docker string is " + outString
             if (outString == queryString) {
                 testResult = "ok"
             } else {
