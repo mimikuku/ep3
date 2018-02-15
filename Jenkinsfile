@@ -98,7 +98,7 @@ node(){
         }
     }
     stage('integration test') {
-        sleep 60
+        sleep 45
         
         def result = "apiv1="
         
@@ -110,8 +110,7 @@ node(){
     }
     stage('send report') {
         print resultOfTests
-        def temp = resultOfTests
-    
+
         def responsebin= httpRequest(
             httpMode: 'POST',
             url: 'http://requestbin.fullcontact.com/api/v1/bins',
@@ -125,7 +124,7 @@ node(){
             validResponseCodes: '200',
             responseHandle: 'NONE',
             contentType: 'APPLICATION_FORM',
-            requestBody: temp )
+            requestBody: resultOfTests )
         println "http://requestbin.fullcontact.com/$reportbucket?inspect"
         println report
     }
@@ -141,9 +140,9 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
     docker.withTool('docker'){
         withDockerServer([uri: dockerConURI]) {
             outString = sh (
-                script: 'docker logs --tail 1 message-processor',
+                script: 'docker logs --tail 2 message-processor',
                 returnStdout: true
-                ).trim()
+                )[0].trim()
             if (outString == queryString) {
                 testResult = "ok"
             } else {
