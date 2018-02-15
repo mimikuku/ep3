@@ -1,4 +1,5 @@
 def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
+def MESSAGE_GATEWAY_SERVER_FOR_TEST = 'http://docker.for.win.localhost:8088/message'
 
 def gateway="gateway"
 def processor="processor"
@@ -82,7 +83,7 @@ node(){
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
                 sleep 45
-                sh 'docker run -d --network=devops-network --name message-gateway -p 8082:8080 barloc/gateway:$BUILD_NUMBER'
+                sh 'docker run -d --network=devops-network --name message-gateway -p 8088:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
             }
         }
@@ -91,7 +92,8 @@ node(){
 
     }
     stage('integration test') {
-        def response = httpRequest httpMode: 'POST', contentType: 'APPLICATION_JSON', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', responseHandle: 'NONE', url: "http://172.17.0.1:8082/message"
+        def testString1 = '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}'
+        def response = httpRequest httpMode: 'POST', requestBody: testString1, responseHandle: 'NONE', url: MESSAGE_GATEWAY_SERVER_FOR_TEST
         sleep 1
         withDockerServer([uri: DOCKER_CON_URI]) {
                 sh 'docker logs --tail 1 message-processor'
