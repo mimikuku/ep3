@@ -91,10 +91,10 @@ node(){
 
     }
     stage('integration test') {
-        def response = httpRequest httpMode: 'POST', contentType: 'APPLICATION_JSON', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://172.17.0.1:8082/message"
-        println response
+        def response = httpRequest httpMode: 'POST', contentType: 'APPLICATION_JSON', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', responseHandle: 'NONE', url: "http://172.17.0.1:8082/message"
+        sleep 1
         withDockerServer([uri: DOCKER_CON_URI]) {
-                sh 'docker logs --tail message-processor'
+                sh 'docker logs --tail 1 message-processor'
         }
     }
     stage('send report') {
