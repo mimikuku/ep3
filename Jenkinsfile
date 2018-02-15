@@ -140,7 +140,7 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
                 script: 'docker logs --tail 1 message-processor',
                 returnStdout: true
                 ).trim()
-            if (readyString == queryString) {
+            if (outString == queryString) {
                 testResult = "ok"
             } else {
                 testResult = "fail"
