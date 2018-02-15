@@ -119,8 +119,7 @@ node(){
             validResponseCodes: '200',
             responseHandle: 'NONE',
             contentType: 'APPLICATION_FORM',
-            requestBody: resultOfTests
-        )
+            requestBody: resultOfTests )
         println "http://requestbin.fullcontact.com/$reportbucket?inspect"
         println report
     }
