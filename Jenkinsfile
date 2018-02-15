@@ -1,3 +1,5 @@
+def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
+
 def gateway="gateway"
 def processor="processor"
 
@@ -7,7 +9,7 @@ node(){
         
         sh "export"
         docker.withTool('docker') {
-            withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+            withDockerServer([uri: DOCKER_CON_URI]) {
                 sh 'docker ps'
             }
         }
@@ -34,7 +36,7 @@ node(){
                 CMD ["tomcat7:run"]'''
                     
             docker.withTool('docker'){
-    			withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+    			withDockerServer([uri: DOCKER_CON_URI]) {
                     sh 'docker build -t gateway:$BUILD_NUMBER .'
     				sh 'docker tag gateway:$BUILD_NUMBER barloc/gateway:$BUILD_NUMBER'
                     }
@@ -51,7 +53,7 @@ node(){
                 CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
                     
             docker.withTool('docker'){
-    		    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+    		    withDockerServer([uri: DOCKER_CON_URI]) {
                     sh 'docker build -t processor:$BUILD_NUMBER .'
     				sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
                 }
@@ -61,7 +63,7 @@ node(){
     stage('save artifact') {
         docker.withTool('docker'){
             withDockerRegistry([credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/']) {
-                withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                withDockerServer([uri: DOCKER_CON_URI]) {
                     sh 'docker push barloc/processor:$BUILD_NUMBER'
                     sh 'docker push barloc/gateway:$BUILD_NUMBER'
                 }
@@ -70,18 +72,18 @@ node(){
     }
     stage('deploy to env') {
         docker.withTool('docker'){
-            withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+            withDockerServer([uri: DOCKER_CON_URI]) {
                 sh 'docker rm --force message-gateway || true'
                 sh 'docker rm --force message-processor || true'
                 sh 'docker rm --force rabbitmq || true'
                 
-                sh 'docker network list'
                 sh 'docker network rm devops-network || true'
                 sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
-                sh 'docker run -d --network=devops-network --link=rabbitmq --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
-                sh 'docker run -d --network=devops-network --link=rabbitmq --name message-processor barloc/processor:$BUILD_NUMBER'
+                sleep 45
+                sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
+                sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
             }
         }
     }
