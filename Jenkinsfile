@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurper
 
 def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
-def MESSAGE_GATEWAY_SERVER_FOR_TEST = 'http://docker.for.win.localhost:8088/message'
+def MESSAGE_GATEWAY_SERVER_FOR_TEST = 'http://172.17.0.1:8088/message'
 
 def TEST_STRING_1 = '"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}'
 def TEST_STRING_2 = '"messageId":2, "timestamp":2234, "protocolVersion":"1.0.1", "messageData":{"mMX":1234, "mPermGen":5678, "mOldGen":22222}'
