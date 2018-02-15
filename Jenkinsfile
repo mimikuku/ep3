@@ -78,7 +78,7 @@ node(){
                 sh 'docker rm --force rabbitmq || true'
                 
                 sh 'docker network rm devops-network || true'
-                sh 'docker network create -d bridge devops-network'
+                sh 'docker network create -d bridge --subnet=172.28.0.0/28 --ip-range=172.28.0.0/29 --gateway=172.28.0.1 devops-network'
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
                 sleep 45
