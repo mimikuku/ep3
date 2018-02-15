@@ -1,4 +1,3 @@
-def workdir="project"
 def gateway="gateway"
 def processor="processor"
 
@@ -14,57 +13,45 @@ node(){
         }
     }
     stage('get source') {
-        dir(workdir) {
-            git branch: 'slysikov', credentialsId: 'a4aaa3b8-a6eb-467d-9c7b-165308891f1e', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
-        }
+        git branch: 'slysikov', credentialsId: 'a4aaa3b8-a6eb-467d-9c7b-165308891f1e', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
     }
     stage('run tests') {
-        dir(workdir) {
-            withMaven(maven: 'mvn') {
+        withMaven(maven: 'mvn') {
                 sh 'mvn clean test'
-            }
         }
     }
     stage('build package') {
-        PROJECTWORKDIR = workdir
-        
-        dir(workdir) {
-            withMaven(maven: 'mvn') {
+        withMaven(maven: 'mvn') {
                 sh 'mvn package -Dmaven.test.skip=true'
-            }
         }
-        dir(gateway) {
-            sh 'cp -R $WORKSPACE/$PROJECTWORKDIR/message-gateway/* .'
+        sh 'cp -R $WORKSPACE/message-gateway/* .'
             
-            writeFile file: 'Dockerfile', text: '''FROM maven
-                COPY . /opt/gateway/
-                WORKDIR /opt/gateway/
-                ENTRYPOINT ["mvn"]
-                CMD ["tomcat7:run"]'''
+        writeFile file: 'Dockerfile', text: '''FROM maven
+            COPY . /opt/gateway/
+            WORKDIR /opt/gateway/
+            ENTRYPOINT ["mvn"]
+            CMD ["tomcat7:run"]'''
                 
-            docker.withTool('docker'){
-			    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                    sh 'docker build -t gateway:$BUILD_NUMBER .'
-					sh 'docker tag gateway:$BUILD_NUMBER barloc/gateway:$BUILD_NUMBER'
-	            }
+        docker.withTool('docker'){
+			withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                sh 'docker build -t gateway:$BUILD_NUMBER .'
+				sh 'docker tag gateway:$BUILD_NUMBER barloc/gateway:$BUILD_NUMBER'
+                }
 	        }
-        }
-        dir(processor) {
-                sh 'cp $(find $WORKSPACE/$PROJECTWORKDIR -name "message-processor-1.0-SNAPSHOT.jar") .'
-		        sh 'cp $(find $WORKSPACE/$PROJECTWORKDIR -name "config.properties") .'
+        sh 'cp $(find $WORKSPACE -name "message-processor-1.0-SNAPSHOT.jar") .'
+		sh 'cp $(find $WORKSPACE -name "config.properties") .'
 		    
-		    writeFile file: 'Dockerfile', text: '''FROM java:8
-                COPY . /opt/processor/
-                WORKDIR /opt/processor/
-                ENTRYPOINT ["java"]
-                CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
+		writeFile file: 'Dockerfile', text: '''FROM java:8
+            COPY . /opt/processor/
+            WORKDIR /opt/processor/
+            ENTRYPOINT ["java"]
+            CMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]'''
                 
-            docker.withTool('docker'){
-			    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
-                    sh 'docker build -t processor:$BUILD_NUMBER .'
-					sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
-	            }
-	        }
+        docker.withTool('docker'){
+		    withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
+                sh 'docker build -t processor:$BUILD_NUMBER .'
+				sh 'docker tag processor:$BUILD_NUMBER barloc/processor:$BUILD_NUMBER'
+            }
         }
     }
     
