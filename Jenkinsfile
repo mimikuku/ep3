@@ -98,24 +98,24 @@ node(){
     stage('integration test') {
         def result = ""
         
-        verifyViaTestString(queryString, serverURI, dockerConURI) {
-            def response = httpRequest httpMode: 'POST', requestBody: "{"+queryString+"}", responseHandle: 'NONE', url: serverURI
-            sleep 1
-            withDockerServer([uri: dockerConURI]) {
-                outString = sh 'docker logs --tail 1 message-processor'
-                readyString = outString.trim()
-                if (readyString == queryString) {
-                    testResult = "Test with query {" + queryString + "} pass sucessfuly"
-                } else {
-                    testResult = "Test with query {" + queryString + "} now works"
-                }
-                result += testResult
-            }
-        }
-        
-        verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI)
+        result += verifyViaTestString(TEST_STRING_1, MESSAGE_GATEWAY_SERVER_FOR_TEST, DOCKER_CON_URI)
     }
     stage('send report') {
 
     }
+}
+
+String verifyViaTestString(queryString, serverURI, dockerConURI) {
+    def response = httpRequest httpMode: 'POST', requestBody: "{"+queryString+"}", responseHandle: 'NONE', url: serverURI
+    sleep 1
+    withDockerServer([uri: dockerConURI]) {
+        outString = sh 'docker logs --tail 1 message-processor'
+        readyString = outString.trim()
+        if (readyString == queryString) {
+            testResult = "Test with query {" + queryString + "} pass sucessfuly"
+        } else {
+            testResult = "Test with query {" + queryString + "} now works"
+        }
+        return testResult
+        }
 }
