@@ -38,7 +38,7 @@ node(){
             }
         }
         dir(gateway) {
-            sh 'cp -R $WORKSPACE/project/message-gateway/* .'
+            sh 'cp -R $WORKSPACE/$PROJECTWORKDIR/message-gateway/* .'
             
             writeFile file: 'Dockerfile', text: '''FROM maven
                 COPY . /opt/gateway/
@@ -54,8 +54,8 @@ node(){
 	        }
         }
         dir(processor) {
-                sh 'cp $(find $WORKSPACE/project -name "message-processor-1.0-SNAPSHOT.jar") .'
-		        sh 'cp $(find $WORKSPACE/project -name "config.properties") .'
+                sh 'cp $(find $WORKSPACE/$PROJECTWORKDIR -name "message-processor-1.0-SNAPSHOT.jar") .'
+		        sh 'cp $(find $WORKSPACE/$PROJECTWORKDIR -name "config.properties") .'
 		    
 		    writeFile file: 'Dockerfile', text: '''FROM java:8
                 COPY . /opt/processor/
