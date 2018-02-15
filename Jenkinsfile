@@ -24,7 +24,7 @@ node(){
         withMaven(maven: 'mvn') {
                 sh 'mvn package -Dmaven.test.skip=true'
         }
-        workdir(gateway) {
+        dir(gateway) {
             sh 'cp -R $WORKSPACE/message-gateway/* .'
                 
             writeFile file: 'Dockerfile', text: '''FROM maven
@@ -40,7 +40,7 @@ node(){
                     }
     	    }
         }
-        workdir(processor) {
+        dir(processor) {
             sh 'cp $(find $WORKSPACE -name "message-processor-1.0-SNAPSHOT.jar") .'
     		sh 'cp $(find $WORKSPACE -name "config.properties") .'
     		    
