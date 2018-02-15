@@ -78,7 +78,7 @@ node(){
                 sh 'docker rm --force rabbitmq || true'
                 
                 sh 'docker network rm devops-network || true'
-                sh 'docker network create -d bridge --subnet=172.28.0.0/28 --ip-range=172.28.0.0/29 --gateway=172.28.0.1 devops-network'
+                sh 'docker network create -d bridge devops-network'
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
                 sleep 45
@@ -91,7 +91,7 @@ node(){
 
     }
     stage('integration test') {
-        def response = httpRequest contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://message-gateway:8080/message", validResponseCodes: '200'
+        def response = httpRequest contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://172.17.0.1:8082/message", validResponseCodes: '200'
         println response
     }
     stage('send report') {
