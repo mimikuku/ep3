@@ -3,6 +3,11 @@ def gateway="gateway"
 def processor="processor"
 
 node(){
+
+    environment {
+        PROJECTWORKDIR = workdir
+    }
+    
     stage('test'){
         dir(workdir) {
             deleteDir()
