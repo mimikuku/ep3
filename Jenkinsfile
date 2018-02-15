@@ -4,9 +4,8 @@ def processor="processor"
 
 node(){
     stage('test'){
-        dir(workdir) {
-            deleteDir()
-        }
+        deleteDir()
+        
         sh "export"
         docker.withTool('docker') {
             withDockerServer([uri: 'tcp://docker.for.win.localhost:2375']) {
