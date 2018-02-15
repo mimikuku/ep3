@@ -1,3 +1,4 @@
+#!groovy
 import groovy.json.JsonSlurper
 
 def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
@@ -108,6 +109,9 @@ node(){
         resultOfTests = result
     }
     stage('send report') {
+        print resultOfTests
+        def temp = resultOfTests
+    
         def responsebin= httpRequest(
             httpMode: 'POST',
             url: 'http://requestbin.fullcontact.com/api/v1/bins',
@@ -121,7 +125,7 @@ node(){
             validResponseCodes: '200',
             responseHandle: 'NONE',
             contentType: 'APPLICATION_FORM',
-            requestBody: resultOfTests )
+            requestBody: temp )
         println "http://requestbin.fullcontact.com/$reportbucket?inspect"
         println report
     }
