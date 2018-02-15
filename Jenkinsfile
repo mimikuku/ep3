@@ -97,7 +97,7 @@ node(){
         }
     }
     stage('integration test') {
-        sleep 90
+        sleep 15
         
         def result = "apiv1="
         
@@ -134,14 +134,16 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
         responseHandle: 'NONE', 
         url: serverURI )
     sleep 1
-    withDockerServer([uri: dockerConURI]) {
-        outString = sh 'docker logs --tail 1 message-processor'
-        readyString = outString.trim()
-        if (readyString == queryString) {
-            testResult = "ok"
-        } else {
-            testResult = "fail"
+    docker.withTool('docker'){
+        withDockerServer([uri: dockerConURI]) {
+            outString = sh 'docker logs --tail 1 message-processor'
+            readyString = outString.trim()
+            if (readyString == queryString) {
+                testResult = "ok"
+            } else {
+                testResult = "fail"
+            }
+            return testResult
         }
-    return testResult
     }
 }
