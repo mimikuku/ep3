@@ -3,11 +3,6 @@ def gateway="gateway"
 def processor="processor"
 
 node(){
-
-    environment {
-        PROJECTWORKDIR = workdir
-    }
-    
     stage('test'){
         dir(workdir) {
             deleteDir()
@@ -32,6 +27,8 @@ node(){
         }
     }
     stage('build package') {
+        PROJECTWORKDIR = workdir
+        
         dir(workdir) {
             withMaven(maven: 'mvn') {
                 sh 'mvn package -Dmaven.test.skip=true'
