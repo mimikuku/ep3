@@ -119,7 +119,7 @@ node(){
             validResponseCodes: '200',
             responseHandle: 'NONE',
             contentType: 'APPLICATION_FORM',
-            requestBody: report
+            requestBody: resultOfTests
         )
         println "http://requestbin.fullcontact.com/$reportbucket?inspect"
         println report
@@ -141,6 +141,6 @@ def verifyViaTestString(queryString, serverURI, dockerConURI) {
         } else {
             testResult = "fail"
         }
-        return testResult
-        }
+    return testResult
+    }
 }
