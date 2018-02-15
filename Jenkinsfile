@@ -82,7 +82,7 @@ node(){
                 
                 sh 'docker run -d --network=devops-network --name rabbitmq rabbitmq'
                 sleep 45
-                sh 'docker run -d --network=devops-network --name message-gateway -p 8888:8080 barloc/gateway:$BUILD_NUMBER'
+                sh 'docker run -d --network=devops-network --name message-gateway -p 8082:8080 barloc/gateway:$BUILD_NUMBER'
                 sh 'docker run -d --network=devops-network --name message-processor barloc/processor:$BUILD_NUMBER'
             }
         }
@@ -91,7 +91,8 @@ node(){
 
     }
     stage('integration test') {
-
+        def response = httpRequest contentType: 'APPLICATION_JSON', httpMode: 'POST', requestBody: '{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}', url: "http://message-gateway:8080/message", validResponseCodes: '200'
+        println response
     }
     stage('send report') {
 
