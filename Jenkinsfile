@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 def DOCKER_CON_URI = 'tcp://docker.for.win.localhost:2375'
 def MESSAGE_GATEWAY_SERVER_FOR_TEST = 'http://docker.for.win.localhost:8088/message'
 
