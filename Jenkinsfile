@@ -102,29 +102,31 @@ node() {
 		def testMessage1 = 'docker exec message-gateway curl http://localhost:8080/message -X POST -d \'{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}\''
 		def procAnswer1 = 'docker logs --tail 1 message-processor'
 		def testMessage2 = 'docker exec message-gateway curl http://localhost:8080/message -X POST -d \'{"messageId":2, "timestamp":2234, "protocolVersion":"1.0.1", "messageData":{"mMX":1234, "mPermGen":5678, "mOldGen":22222}}\''
-		def procAnswer2 = 'docker logs --tail 1 message-processor'
+		def procAnswer2 = 'docker logs --tail 2 message-processor'
 		def testMessage3 = 'docker exec message-gateway curl http://localhost:8080/message -X POST -d \'{"messageId":3, "timestamp":3234, "protocolVersion":"2.0.0", "payload":{"mMX":1234, "mPermGen":5678, "mOldGen":22222, "mYoungGen":333333}}\''
-		def procAnswer3 = 'docker logs --tail 1 message-processor'
+		def procAnswer3 = 'docker logs --tail 3 message-processor'
 		echo 'sending test messages and pushing it in backet'
 		docker.withTool('docker'){
 			withDockerServer([uri: dockerSock]) {
 				try {
 				sh testMessage1
-				report1 = sh (script: procAnswer1)
-					println report1
+				sleep 5
+				sh procAnswer1
 				}catch (err){
 					report1 = err.getMessage()
 					println "Bad" + report1
 				}
 				try {
 					sh testMessage2
-					report2 = sh (script: procAnswer2)
+					sleep 5
+					sh procAnswer2
 				}catch (err){
 					report2 = err.getMessage()
 				}
 				try {
 					sh testMessage3
-					report3 = sh (script: procAnswer3)
+					sleep 5
+					sh procAnswer3
 				}catch (err){
 					report3 = err.getMessage()
 				}
