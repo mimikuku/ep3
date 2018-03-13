@@ -87,11 +87,13 @@ node() {
 	 	docker.withTool('docker'){
                  withDockerServer([uri: dockerSock]) {
                    sh 'docker run -d --name message-gateway -p 8888:8080 mimisha/messege-gateway:$BUILD_NUMBER'
+				sleep 30
                    sh 'docker run -d --name rabbitmq --net=container:message-gateway rabbitmq'
+				sleep 30
                    sh 'docker run -d --name message-processor --net=container:rabbitmq mimisha/messege-processor:$BUILD_NUMBER'
 			       sleep 30 //rabbitmq contauner need 30 seconds to load, and message-gateway contauner wait it.
-				   sh 'docker start message-processor'
-				   sleep 20 //wait load message-gateway contauner to send messages on frontend.
+				  sh 'docker start message-processor'
+				  sleep 20 //wait load message-gateway contauner to send messages on frontend.
 	  }
 	 }
 	}
