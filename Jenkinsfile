@@ -26,7 +26,7 @@ node() {
 	stage('get source') {
 		dir(workdir) {
 			echo 'Geting source from git repository'
-			git branch: 'rkudryashov', credentialsId: '650ea460-204d-4861-963b-af80d47367b0', url: 'git@gitlab.com:nikolyabb/epam-devops-3rd-stream.git'
+			git branch: 'mkukharchuk', credentialsId: '9b24a61e-3be1-42bf-8886-7a4a5811873a', url: 'https://github.com/mimikuku/ep3.git'
 
 		}
 	}
@@ -56,12 +56,12 @@ node() {
 			 sh 'cp $(find $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-processor/ -name "config.properties") .'
 			 sh 'echo \'FROM java:8\\n\\n\\nCOPY . /workdir/\\nWORKDIR /workdir/\\nENTRYPOINT ["java"]\\nCMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]\' > Dockerfile'
 			 docker.withTool('docker') {
-				 withDockerRegistry([credentialsId: 'f9b46bc9-8260-4db8-821c-b9fa96fdb4f2', url: 'https://index.docker.io/v1/']) {
+				 withDockerRegistry([credentialsId: 'fcee4710-876f-4799-92d4-73414aab1258', url: 'https://index.docker.io/repov1/']) {
 					 withDockerServer([uri: dockerSock]) {
 						 sh 'docker build -t messege-processor:$BUILD_NUMBER .'
-						 sh 'docker tag messege-processor:$BUILD_NUMBER rkudryashov/messege-processor:$BUILD_NUMBER'
-						 sh 'docker push rkudryashov/messege-processor:$BUILD_NUMBER'
-						 sh 'docker rmi rkudryashov/messege-processor:$BUILD_NUMBER messege-processor:$BUILD_NUMBER'
+						 sh 'docker tag messege-processor:$BUILD_NUMBER mimisha/messege-processor:$BUILD_NUMBER'
+						 sh 'docker push mimisha/messege-processor:$BUILD_NUMBER'
+						 sh 'docker rmi mimisha/messege-processor:$BUILD_NUMBER messege-processor:$BUILD_NUMBER'
 					 }
 				 }
 	        }
@@ -70,12 +70,12 @@ node() {
                 sh 'cp -R $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-gateway/* .'
                 sh 'echo \'FROM maven\\n\\n\\nCOPY . /workdir/\\nWORKDIR /workdir/\\nENTRYPOINT ["mvn"]\\nCMD ["tomcat7:run"]\' > Dockerfile'
 				docker.withTool('docker'){
-                        withDockerRegistry([credentialsId: 'f9b46bc9-8260-4db8-821c-b9fa96fdb4f2', url: 'https://index.docker.io/v1/']) {
+                        withDockerRegistry([credentialsId: 'fcee4710-876f-4799-92d4-73414aab1258', url: 'https://index.docker.io/repov1/']) {
                                 withDockerServer([uri: dockerSock]) {
                                         sh 'docker build -t messege-gateway:$BUILD_NUMBER .'
-                                        sh 'docker tag messege-gateway:$BUILD_NUMBER rkudryashov/messege-gateway:$BUILD_NUMBER'
-                                        sh 'docker push rkudryashov/messege-gateway:$BUILD_NUMBER'
-									    sh 'docker rmi rkudryashov/messege-gateway:$BUILD_NUMBER messege-gateway:$BUILD_NUMBER'
+                                        sh 'docker tag messege-gateway:$BUILD_NUMBER mimisha/messege-gateway:$BUILD_NUMBER'
+                                        sh 'docker push mimisha/messege-gateway:$BUILD_NUMBER'
+									    sh 'docker rmi mimisha/messege-gateway:$BUILD_NUMBER messege-gateway:$BUILD_NUMBER'
 	                                    }
 						        }
 				}
@@ -86,9 +86,9 @@ node() {
 		echo 'deploing docker images'
 	 	docker.withTool('docker'){
                  withDockerServer([uri: dockerSock]) {
-                   sh 'docker run -d --name message-gateway -p 8888:8080 rkudryashov/messege-gateway:$BUILD_NUMBER'
+                   sh 'docker run -d --name message-gateway -p 8888:8080 mimisha/messege-gateway:$BUILD_NUMBER'
                    sh 'docker run -d --name rabbitmq --net=container:message-gateway rabbitmq'
-                   sh 'docker run -d --name message-processor --net=container:rabbitmq rkudryashov/messege-processor:$BUILD_NUMBER'
+                   sh 'docker run -d --name message-processor --net=container:rabbitmq mimisha/messege-processor:$BUILD_NUMBER'
 			       sleep 30 //rabbitmq contauner need 30 seconds to load, and message-gateway contauner wait it.
 				   sh 'docker start message-processor'
 				   sleep 20 //wait load message-gateway contauner to send messages on frontend.
