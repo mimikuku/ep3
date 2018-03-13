@@ -95,17 +95,6 @@ node() {
 	  }
 	 }
 	}
-	stage('create bin'){
-		echo 'Going to create bin'
-		def rbin = httpRequest(
-				consoleLogResponseBody: true,
-				httpMode: 'POST',
-				url: "${binHost}/api/v1/bins"
-		)
-		def json = new JsonSlurper().parseText(rbin.getContent())
-		binNumber = json.name.toString()
-		println binNumber
-	}
 
     stage('integration test') {
 		def testMessage1 = 'docker exec message-gateway curl -s -o /dev/null/ -w "%{http_code} "http://localhost:8080/message -X POST -d \'{"messageId":1, "timestamp":1234, "protocolVersion":"1.0.0", "messageData":{"mMX":1234, "mPermGen":1234}}\''
@@ -125,12 +114,6 @@ node() {
 				}catch (err){
 					report1 = err.getMessage()
 				}
-				httpRequest(
-						consoleLogResponseBody: true,
-						httpMode: 'POST',
-						url: "${binHost}/${binNumber}",
-						requestBody: 'Test message is: (' + report1.toString() + ')'
-				)
 				try {
 					sh testMessage2
 					report2 = sh (script: procAnswer2,
@@ -139,12 +122,6 @@ node() {
 				}catch (err){
 					report2 = err.getMessage()
 				}
-				httpRequest(
-						consoleLogResponseBody: true,
-						httpMode: 'POST',
-						url: "${binHost}/${binNumber}",
-						requestBody: 'Test message is:(' + report2.toString() +')'
-				)
 				try {
 					sh testMessage3
 					report3 = sh (script: procAnswer3,
@@ -153,18 +130,8 @@ node() {
 				}catch (err){
 					report3 = err.getMessage()
 				}
-				httpRequest(
-						consoleLogResponseBody: true,
-						httpMode: 'POST',
-						url: "${binHost}/${binNumber}",
-						requestBody: 'Test message is: (' + report3.toString() +')'
-				)
 				}
 			}
 	}
-    stage('send report') {
-	echo 'to check report use url'
-		println "${binHost}/${binNumber}?inspect"
-    }
 }
 }
