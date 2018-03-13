@@ -111,10 +111,10 @@ node() {
 				report1 = sh (script: procAnswer1,
 					returnStdout: true)
 				report1 == '200'
-				sh 'echo $report1'
+				println report1
 				}catch (err){
 					report1 = err.getMessage()
-					sh 'echo $report1'
+					println report1
 				}
 				try {
 					sh testMessage2
