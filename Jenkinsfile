@@ -110,27 +110,21 @@ node() {
 			withDockerServer([uri: dockerSock]) {
 				try {
 				sh testMessage1
-				report1 = sh (script: procAnswer1,
-					returnStdout: true)
-				report1 == '200'
-				println "Good" + report1
+				report1 = sh (script: procAnswer1)
+					println report1
 				}catch (err){
 					report1 = err.getMessage()
 					println "Bad" + report1
 				}
 				try {
 					sh testMessage2
-					report2 = sh (script: procAnswer2,
-							returnStdout: true)
-					    report2 == '200'
+					report2 = sh (script: procAnswer2)
 				}catch (err){
 					report2 = err.getMessage()
 				}
 				try {
 					sh testMessage3
-					report3 = sh (script: procAnswer3,
-							returnStdout: true)
-					report3 == '200'
+					report3 = sh (script: procAnswer3)
 				}catch (err){
 					report3 = err.getMessage()
 				}
