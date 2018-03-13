@@ -111,8 +111,10 @@ node() {
 				report1 = sh (script: procAnswer1,
 					returnStdout: true)
 				report1 == '200'
+				sh 'echo $report1'
 				}catch (err){
 					report1 = err.getMessage()
+					sh 'echo $report1'
 				}
 				try {
 					sh testMessage2
@@ -130,9 +132,6 @@ node() {
 				}catch (err){
 					report3 = err.getMessage()
 				}
-				sh 'echo ${report1.toString()}'
-				sh 'echo ${report2.toString()}'
-				sh 'echo ${report3.toString()}'
 				}
 			}
 	}
