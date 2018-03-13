@@ -89,7 +89,7 @@ node() {
                    sh 'docker run -d --name message-gateway -p 8888:8080 mimisha/messege-gateway:$BUILD_NUMBER'
 				sleep 30
                    sh 'docker run -d --name rabbitmq --net=container:message-gateway rabbitmq'
-				sleep 30
+				sleep 120
                    sh 'docker run -d --name message-processor --net=container:rabbitmq mimisha/messege-processor:$BUILD_NUMBER'
 			       sleep 30 //rabbitmq contauner need 30 seconds to load, and message-gateway contauner wait it.
 				  sh 'docker start message-processor'
