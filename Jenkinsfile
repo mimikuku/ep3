@@ -54,7 +54,7 @@ node() {
 	     dir (proc) {
 			 sh 'cp $(find $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-processor/ -name "message-processor-1.0-SNAPSHOT.jar") .'
 			 sh 'cp $(find $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-processor/ -name "config.properties") .'
-			 sh 'echo \'FROM java:8\\n\\n\\nCOPY . /workdir/\\nWORKDIR /workdir/\\nENTRYPOINT ["java"]\\nCMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]\' > Dockerfile'
+			 sh 'echo -e 'FROM java:8\n\n\nCOPY . /workdir/\nWORKDIR /workdir/\nENTRYPOINT ["java"]\nCMD ["-jar","message-processor-1.0-SNAPSHOT.jar","config.properties"]' > Dockerfile'
 			 docker.withTool('docker') {
 				 withDockerRegistry([credentialsId: 'fcee4710-876f-4799-92d4-73414aab1258', url: 'https://index.docker.io/repov1/']) {
 					 withDockerServer([uri: dockerSock]) {
@@ -68,7 +68,7 @@ node() {
 		}
 		 dir (gateway){
                 sh 'cp -R $JENKINS_HOME/workspace/$JOB_NAME/dir1/message-gateway/* .'
-                sh 'echo \'FROM maven\\n\\n\\nCOPY . /workdir/\\nWORKDIR /workdir/\\nENTRYPOINT ["mvn"]\\nCMD ["tomcat7:run"]\' > Dockerfile'
+                sh 'echo -e 'FROM maven\n\n\nCOPY . /workdir/\nWORKDIR /workdir/\nENTRYPOINT ["mvn"]\nCMD ["tomcat7:run"]' > Dockerfile'
 				docker.withTool('docker'){
                         withDockerRegistry([credentialsId: 'fcee4710-876f-4799-92d4-73414aab1258', url: 'https://index.docker.io/repov1/']) {
                                 withDockerServer([uri: dockerSock]) {
