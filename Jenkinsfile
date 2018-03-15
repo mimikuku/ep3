@@ -23,10 +23,9 @@ pipeline {
             }    
         }
         stage ('Build launch') {
-            step {
+            steps {
                 echo BUILD
             }
         }
         
     }
-}
