@@ -87,7 +87,7 @@ pipeline {
                     sleep 5
                     notific += sh (script:"docker logs --tail 1 message-processor", returnStdout: true)
                     sleep 5
-                    sh "echo $notific"
+                    println notific
                     sh 'echo "\n Verification ENDED \n" >> logFile'
                     
                     def var3 = sh (script:"curl -X POST https://requestbin.fullcontact.com/api/v1/bins", returnStdout: true)
